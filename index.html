@@ -776,7 +776,7 @@
     document.getElementById('tracker-stats').style.display = '';
 
     // Stats
-    const weights = entries.filter(e => e.weight).map(e => parseFloat(e.weight));
+    const weights = entries.filter(e => e.weight && !isNaN(parseFloat(e.weight))).map(e => parseFloat(e.weight));
     if (weights.length) {
       const cur   = weights[weights.length - 1];
       const start = weights[0];
@@ -785,13 +785,14 @@
       document.getElementById('stat-start').textContent = start + ' kg';
       const diffEl = document.getElementById('stat-diff');
       diffEl.textContent  = (diff > 0 ? '+' : '') + diff + ' kg';
-      diffEl.style.color  = diff <= 0 ? 'var(--green)' : 'var(--red)';
+      diffEl.style.color  = diff < 0 ? 'var(--green)' : 'var(--red)';
     }
     document.getElementById('stat-count').textContent = entries.length;
 
     // Rows (most recent first)
-    [...entries].reverse().forEach((e, idx) => {
-      const realIdx = entries.length - 1 - idx;
+    for (let i = entries.length - 1; i >= 0; i--) {
+      const e = entries[i];
+      const realIdx = i;
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td>${formatDate(e.date)}</td>
@@ -802,7 +803,7 @@
         <td><button class="del-btn" title="Supprimer" onclick="deleteEntry(${realIdx})">🗑</button></td>
       `;
       tbody.appendChild(tr);
-    });
+    }
   }
 
   function formatDate(dateStr) {
@@ -818,8 +819,13 @@
     const feeling = document.getElementById('t-feeling').value;
     const note    = document.getElementById('t-note').value.trim();
 
-    if (!date && !weight && !water && !feeling && !note) {
-      alert('Remplis au moins un champ avant d\'ajouter une entrée !');
+    if (!date) {
+      alert('La date est obligatoire pour ajouter une entrée.');
+      return;
+    }
+
+    if (!weight && !water && !feeling && !note) {
+      alert('Remplis au moins un autre champ en plus de la date !');
       return;
     }
 
