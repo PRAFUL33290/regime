@@ -319,6 +319,155 @@
       nav button { padding: 7px 14px; font-size: .82rem; }
       .section-title { font-size: 1.3rem; }
     }
+
+    /* ── Hamburger button ── */
+    .hamburger-btn {
+      position: fixed;
+      right: 20px;
+      top: 14px;
+      z-index: 1001;
+      background: var(--green);
+      border: none;
+      border-radius: 10px;
+      padding: 10px 12px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 12px rgba(39,174,96,.45);
+      transition: background .2s, box-shadow .2s;
+    }
+    .hamburger-btn:hover { background: #1e8449; box-shadow: 0 4px 18px rgba(39,174,96,.5); }
+    .hamburger-btn span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: #fff;
+      border-radius: 2px;
+      transition: transform .32s ease, opacity .22s ease;
+      transform-origin: center;
+    }
+    .hamburger-btn.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+    .hamburger-btn.open span:nth-child(2) { opacity: 0; transform: scaleX(0); }
+    .hamburger-btn.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+    /* ── Overlay ── */
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.5);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease;
+    }
+    .menu-overlay.open { opacity: 1; pointer-events: all; }
+
+    /* ── Side panel ── */
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: min(300px, 85vw);
+      height: 100%;
+      background: var(--card);
+      z-index: 1000;
+      transform: translateX(100%);
+      transition: transform .38s cubic-bezier(.4,0,.2,1);
+      overflow-y: auto;
+      box-shadow: -6px 0 28px rgba(0,0,0,.15);
+      display: flex;
+      flex-direction: column;
+    }
+    .side-menu.open { transform: translateX(0); }
+    .side-menu-header {
+      background: linear-gradient(135deg, #1a6b3a 0%, #27ae60 100%);
+      color: #fff;
+      padding: 28px 20px 22px;
+      flex-shrink: 0;
+      position: relative;
+    }
+    .side-menu-header h2 { font-size: 1.15rem; font-weight: 800; }
+    .side-menu-header p  { font-size: .82rem; opacity: .85; margin-top: 5px; }
+    .side-menu-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(255,255,255,.2);
+      border: none;
+      color: #fff;
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background .2s;
+    }
+    .side-menu-close:hover { background: rgba(255,255,255,.35); }
+    .side-menu-nav {
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 6px;
+      flex: 1;
+    }
+    .side-menu-nav button {
+      text-align: left;
+      background: var(--bg);
+      border: 2px solid transparent;
+      border-radius: 10px;
+      padding: 14px 18px;
+      font-size: .95rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text);
+      transition: all .2s;
+    }
+    .side-menu-nav button:hover { border-color: var(--green); color: var(--green); background: #e8f8ee; }
+    .side-menu-nav button.active { background: var(--green); color: #fff; border-color: var(--green); }
+    .side-menu-footer {
+      padding: 16px 20px;
+      border-top: 1px solid #e0e4ea;
+      font-size: .8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    /* ── Section banner photos ── */
+    .section-photo {
+      width: 100%;
+      height: 220px;
+      object-fit: cover;
+      border-radius: var(--radius);
+      margin-bottom: 28px;
+      box-shadow: var(--shadow);
+      display: block;
+    }
+
+    /* ── Hero photo strip ── */
+    .hero-photos {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-top: 24px;
+      position: relative;
+      flex-wrap: wrap;
+    }
+    .hero-photos img {
+      width: 90px;
+      height: 90px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 3px solid rgba(255,255,255,.4);
+      box-shadow: 0 4px 14px rgba(0,0,0,.25);
+      transition: transform .22s, box-shadow .22s;
+    }
+    .hero-photos img:hover { transform: scale(1.1) rotate(-1deg); box-shadow: 0 8px 22px rgba(0,0,0,.3); }
   </style>
 </head>
 <body>
@@ -328,7 +477,41 @@
   <h1>🥗 Régime &amp; Rééquilibrage Alimentaire</h1>
   <p>Perdre du poids ne veut pas dire arrêter de manger.</p>
   <span class="hero-badge">✅ mieux manger · ❌ réduire les excès · 💪 garder les muscles</span>
+
+  <div class="hero-photos">
+    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=180&auto=format&fit=crop&q=80" alt="Bol de salade fraîche" loading="lazy" />
+    <img src="https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=180&auto=format&fit=crop&q=80" alt="Fruits frais" loading="lazy" />
+    <img src="https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=180&auto=format&fit=crop&q=80" alt="Petit-déjeuner sain" loading="lazy" />
+    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=180&auto=format&fit=crop&q=80" alt="Repas équilibré" loading="lazy" />
+  </div>
 </header>
+
+<!-- ═══════ HAMBURGER BUTTON ═══════ -->
+<button class="hamburger-btn" id="hamburger-btn" aria-label="Ouvrir le menu" onclick="toggleMenu()">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
+<!-- ═══════ SIDE MENU OVERLAY ═══════ -->
+<div class="menu-overlay" id="menu-overlay" onclick="closeMenu()"></div>
+
+<!-- ═══════ SIDE MENU ═══════ -->
+<aside class="side-menu" id="side-menu" role="navigation" aria-label="Menu latéral">
+  <div class="side-menu-header">
+    <button class="side-menu-close" onclick="closeMenu()" aria-label="Fermer le menu">✕</button>
+    <h2>🥗 Navigation</h2>
+    <p>Régime &amp; Rééquilibrage Alimentaire</p>
+  </div>
+  <nav class="side-menu-nav" id="side-nav">
+    <button class="active" data-tab="aliments" onclick="switchTab(this)">🍎 Aliments</button>
+    <button data-tab="repas" onclick="switchTab(this)">🍽️ Repas</button>
+    <button data-tab="matin" onclick="switchTab(this)">🌅 Le matin</button>
+    <button data-tab="astuces" onclick="switchTab(this)">💡 Astuces</button>
+    <button data-tab="tracker" onclick="switchTab(this)">📊 Tracker</button>
+  </nav>
+  <div class="side-menu-footer">Manger intelligemment, pas se punir 💪</div>
+</aside>
 
 <!-- ═══════ NAV ═══════ -->
 <nav id="main-nav">
@@ -344,6 +527,7 @@
   <!-- ═══════ ALIMENTS ═══════ -->
   <section id="aliments" class="section active">
     <p class="section-title">🍎 Aliments à privilégier &amp; à éviter</p>
+    <img src="https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=1200&auto=format&fit=crop&q=80" alt="Bol de salade fraîche et colorée" class="section-photo" loading="lazy" />
 
     <div class="grid grid-2" style="margin-bottom:28px;">
 
@@ -447,6 +631,7 @@
   <!-- ═══════ REPAS ═══════ -->
   <section id="repas" class="section">
     <p class="section-title">🍽️ Exemples de repas</p>
+    <img src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=1200&auto=format&fit=crop&q=80" alt="Repas équilibré coloré" class="section-photo" loading="lazy" />
 
     <p class="section-title" style="font-size:1.1rem;color:var(--green);">☀️ Repas du midi</p>
     <div class="grid grid-3" style="margin-bottom:36px;">
@@ -524,6 +709,7 @@
   <!-- ═══════ MATIN ═══════ -->
   <section id="matin" class="section">
     <p class="section-title">🌅 Faut-il manger le matin ?</p>
+    <img src="https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=1200&auto=format&fit=crop&q=80" alt="Petit-déjeuner sain" class="section-photo" loading="lazy" />
 
     <div class="card" style="margin-bottom:24px;border-left:4px solid var(--orange);">
       <p style="font-size:1.05rem;font-weight:700;margin-bottom:10px;">Oui… mais pas obligatoire !</p>
@@ -572,6 +758,7 @@
   <!-- ═══════ ASTUCES ═══════ -->
   <section id="astuces" class="section">
     <p class="section-title">💡 Astuces qui marchent vraiment</p>
+    <img src="https://images.unsplash.com/photo-1490474418585-ba9bad8fd0ea?w=1200&auto=format&fit=crop&q=80" alt="Fruits et légumes frais colorés" class="section-photo" loading="lazy" />
 
     <div class="grid" style="gap:16px;">
 
@@ -860,6 +1047,56 @@
   document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
 
   renderEntries();
+
+  // ── Hamburger menu ──
+  function toggleMenu() {
+    const menu    = document.getElementById('side-menu');
+    const isOpen  = menu.classList.contains('open');
+    if (isOpen) { closeMenu(); } else { openMenu(); }
+  }
+
+  function openMenu() {
+    document.getElementById('side-menu').classList.add('open');
+    document.getElementById('menu-overlay').classList.add('open');
+    document.getElementById('hamburger-btn').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeMenu() {
+    document.getElementById('side-menu').classList.remove('open');
+    document.getElementById('menu-overlay').classList.remove('open');
+    document.getElementById('hamburger-btn').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function switchTab(btn) {
+    const tab = btn.dataset.tab;
+    // Update main nav
+    tabs.forEach(b => b.classList.remove('active'));
+    panels.forEach(p => p.classList.remove('active'));
+    const mainBtn = document.querySelector(`#main-nav [data-tab="${tab}"]`);
+    if (mainBtn) mainBtn.classList.add('active');
+    document.getElementById(tab).classList.add('active');
+    // Update side menu active state
+    document.querySelectorAll('#side-nav button').forEach(b => {
+      b.classList.toggle('active', b.dataset.tab === tab);
+    });
+    closeMenu();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Keep side menu in sync when main nav tabs are clicked
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      document.querySelectorAll('#side-nav button').forEach(b => {
+        b.classList.toggle('active', b.dataset.tab === tab);
+      });
+    });
+  });
+
+  // Close menu on Escape key
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
 </script>
 </body>
 </html>
