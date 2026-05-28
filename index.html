@@ -1,0 +1,859 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Régime &amp; Rééquilibrage Alimentaire</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:  #27ae60;
+      --red:    #e74c3c;
+      --orange: #e67e22;
+      --blue:   #2980b9;
+      --purple: #8e44ad;
+      --yellow: #f1c40f;
+      --bg:     #f4f6f9;
+      --card:   #ffffff;
+      --text:   #2c3e50;
+      --muted:  #7f8c8d;
+      --radius: 14px;
+      --shadow: 0 4px 18px rgba(0,0,0,.08);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+    }
+
+    /* ── Hero ── */
+    header {
+      background: linear-gradient(135deg, #1a6b3a 0%, #27ae60 60%, #2ecc71 100%);
+      color: #fff;
+      text-align: center;
+      padding: 60px 20px 50px;
+      position: relative;
+      overflow: hidden;
+    }
+    header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Ccircle cx='30' cy='30' r='20'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    header h1 {
+      font-size: clamp(1.8rem, 4vw, 3rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      position: relative;
+    }
+    header p {
+      font-size: 1.1rem;
+      margin-top: 12px;
+      opacity: .9;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(255,255,255,.2);
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 50px;
+      padding: 6px 18px;
+      font-size: .85rem;
+      margin-top: 18px;
+      position: relative;
+    }
+
+    /* ── Nav tabs ── */
+    nav {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 24px 20px;
+      background: var(--card);
+      box-shadow: 0 2px 8px rgba(0,0,0,.06);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    nav button {
+      background: var(--bg);
+      border: 2px solid transparent;
+      border-radius: 50px;
+      padding: 8px 20px;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--text);
+      transition: all .2s;
+    }
+    nav button:hover { border-color: var(--green); color: var(--green); }
+    nav button.active {
+      background: var(--green);
+      color: #fff;
+      border-color: var(--green);
+    }
+
+    /* ── Layout ── */
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 80px;
+    }
+
+    /* ── Sections ── */
+    .section { display: none; animation: fadeIn .35s ease; }
+    .section.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Section title ── */
+    .section-title {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* ── Cards grid ── */
+    .grid { display: grid; gap: 20px; }
+    .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+    .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      transition: transform .2s, box-shadow .2s;
+    }
+    .card:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(0,0,0,.12); }
+
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* ── Tag pills ── */
+    .tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 50px;
+      font-size: .82rem;
+      font-weight: 600;
+    }
+    .tag-green  { background: #e8f8ee; color: #1e7a40; }
+    .tag-red    { background: #fde9e7; color: #c0392b; }
+    .tag-orange { background: #fef3e7; color: #b7600e; }
+    .tag-blue   { background: #e8f3fd; color: #1a6696; }
+    .tag-purple { background: #f3e8fd; color: #6c3483; }
+    .tag-yellow { background: #fefae0; color: #9a7d0a; }
+
+    /* ── Meal cards ── */
+    .meal-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      border-left: 4px solid var(--green);
+    }
+    .meal-card.soir { border-left-color: var(--blue); }
+    .meal-card.breakfast { border-left-color: var(--orange); }
+
+    .meal-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 12px; }
+    .meal-card ul { padding-left: 18px; }
+    .meal-card ul li { margin-bottom: 5px; font-size: .92rem; }
+
+    /* ── Tips ── */
+    .tip-card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 16px;
+      align-items: flex-start;
+      transition: transform .2s;
+    }
+    .tip-card:hover { transform: translateY(-2px); }
+    .tip-num {
+      min-width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--green), #2ecc71);
+      color: #fff;
+      font-weight: 800;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .tip-body h4 { font-weight: 700; margin-bottom: 4px; }
+    .tip-body p  { font-size: .9rem; color: var(--muted); }
+
+    /* ── Warning box ── */
+    .warning-box {
+      background: #fff8e1;
+      border-left: 5px solid var(--yellow);
+      border-radius: var(--radius);
+      padding: 20px 22px;
+      margin-bottom: 30px;
+    }
+    .warning-box strong { color: #7a5c00; }
+
+    /* ── Progress tracker ── */
+    #tracker-section .tracker-wrap {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+    .tracker-row { display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+    .tracker-row input[type=date],
+    .tracker-row input[type=number],
+    .tracker-row input[type=text],
+    .tracker-row select {
+      flex: 1;
+      min-width: 140px;
+      padding: 10px 14px;
+      border: 2px solid #e0e4ea;
+      border-radius: 10px;
+      font-size: .95rem;
+      outline: none;
+      transition: border-color .2s;
+    }
+    .tracker-row input:focus, .tracker-row select:focus { border-color: var(--green); }
+    .btn-add {
+      background: var(--green);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 24px;
+      font-size: .95rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background .2s;
+    }
+    .btn-add:hover { background: #1e8449; }
+    .btn-clear {
+      background: var(--bg);
+      color: var(--red);
+      border: 2px solid var(--red);
+      border-radius: 10px;
+      padding: 10px 20px;
+      font-size: .9rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .btn-clear:hover { background: var(--red); color: #fff; }
+
+    #log-table { width: 100%; border-collapse: collapse; margin-top: 18px; }
+    #log-table th, #log-table td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid #eaeaea;
+      font-size: .88rem;
+    }
+    #log-table th { font-weight: 700; color: var(--muted); font-size: .8rem; text-transform: uppercase; }
+    #log-table td .del-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--red);
+      font-size: 1rem;
+    }
+    .score-bar { height: 8px; border-radius: 4px; background: #eee; margin-top: 6px; overflow: hidden; }
+    .score-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--green), #2ecc71); transition: width .5s; }
+
+    /* ── Checklist ── */
+    .checklist { list-style: none; }
+    .checklist li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: .95rem;
+      cursor: pointer;
+      user-select: none;
+    }
+    .checklist li:last-child { border-bottom: none; }
+    .checklist li .chk {
+      width: 22px; height: 22px;
+      border: 2px solid #ccc;
+      border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem;
+      flex-shrink: 0;
+      transition: all .2s;
+    }
+    .checklist li.done .chk { background: var(--green); border-color: var(--green); color: #fff; }
+    .checklist li.done span { text-decoration: line-through; color: var(--muted); }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 30px 20px;
+      font-size: .85rem;
+      color: var(--muted);
+      border-top: 1px solid #e0e4ea;
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      nav button { padding: 7px 14px; font-size: .82rem; }
+      .section-title { font-size: 1.3rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════ HEADER ═══════ -->
+<header>
+  <h1>🥗 Régime &amp; Rééquilibrage Alimentaire</h1>
+  <p>Perdre du poids ne veut pas dire arrêter de manger.</p>
+  <span class="hero-badge">✅ mieux manger · ❌ réduire les excès · 💪 garder les muscles</span>
+</header>
+
+<!-- ═══════ NAV ═══════ -->
+<nav id="main-nav">
+  <button class="active" data-tab="aliments">🍎 Aliments</button>
+  <button data-tab="repas">🍽️ Repas</button>
+  <button data-tab="matin">🌅 Le matin</button>
+  <button data-tab="astuces">💡 Astuces</button>
+  <button data-tab="tracker">📊 Tracker</button>
+</nav>
+
+<main>
+
+  <!-- ═══════ ALIMENTS ═══════ -->
+  <section id="aliments" class="section active">
+    <p class="section-title">🍎 Aliments à privilégier &amp; à éviter</p>
+
+    <div class="grid grid-2" style="margin-bottom:28px;">
+
+      <!-- Protéines -->
+      <div class="card">
+        <p class="card-title" style="color:var(--green);">💪 Protéines</p>
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">Calent longtemps, évitent les fringales et protègent les muscles.</p>
+        <div class="tags">
+          <span class="tag tag-green">🍗 Poulet</span>
+          <span class="tag tag-green">🦃 Dinde</span>
+          <span class="tag tag-green">🥚 Œufs</span>
+          <span class="tag tag-green">🐟 Thon</span>
+          <span class="tag tag-green">🐠 Saumon</span>
+          <span class="tag tag-green">🥩 Steak 5%</span>
+          <span class="tag tag-green">🍖 Jambon blanc</span>
+          <span class="tag tag-green">🦐 Crevettes</span>
+          <span class="tag tag-green">🥛 Fromage blanc</span>
+          <span class="tag tag-green">🫙 Skyr</span>
+        </div>
+      </div>
+
+      <!-- Légumes -->
+      <div class="card">
+        <p class="card-title" style="color:var(--green);">🥦 Légumes &amp; fibres</p>
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">Remplissent l'estomac avec très peu de calories.</p>
+        <div class="tags">
+          <span class="tag tag-green">🥗 Salade</span>
+          <span class="tag tag-green">🥒 Concombre</span>
+          <span class="tag tag-green">🍅 Tomates</span>
+          <span class="tag tag-green">🫑 Courgettes</span>
+          <span class="tag tag-green">🫘 Haricots verts</span>
+          <span class="tag tag-green">🥕 Carottes</span>
+          <span class="tag tag-green">🥦 Brocolis</span>
+          <span class="tag tag-green">🍄 Champignons</span>
+          <span class="tag tag-green">🫑 Poivrons</span>
+        </div>
+      </div>
+
+      <!-- Féculents -->
+      <div class="card">
+        <p class="card-title" style="color:var(--orange);">🌾 Bons féculents <small style="font-weight:400;font-size:.8rem;">(petites portions)</small></p>
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">Donnent de l'énergie — ne pas abuser.</p>
+        <div class="tags">
+          <span class="tag tag-orange">🍚 Riz</span>
+          <span class="tag tag-orange">🍝 Pâtes complètes</span>
+          <span class="tag tag-orange">🥔 Pommes de terre</span>
+          <span class="tag tag-orange">🌾 Quinoa</span>
+          <span class="tag tag-orange">🍞 Pain complet</span>
+        </div>
+      </div>
+
+      <!-- Fruits -->
+      <div class="card">
+        <p class="card-title" style="color:var(--blue);">🍓 Fruits <small style="font-weight:400;font-size:.8rem;">(modérément)</small></p>
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">Idéaux pour remplacer les desserts industriels.</p>
+        <div class="tags">
+          <span class="tag tag-blue">🍓 Fraises</span>
+          <span class="tag tag-blue">🍈 Melon</span>
+          <span class="tag tag-blue">🍎 Pomme</span>
+          <span class="tag tag-blue">🍊 Orange</span>
+          <span class="tag tag-blue">🥝 Kiwi</span>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- À éviter -->
+    <p class="section-title" style="color:var(--red);">❌ À éviter au maximum</p>
+
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title" style="color:var(--red);">🚫 Mauvais pour la perte de poids</p>
+        <div class="tags">
+          <span class="tag tag-red">🥤 Soda</span>
+          <span class="tag tag-red">🍔 Fast-food fréquent</span>
+          <span class="tag tag-red">🍟 Chips</span>
+          <span class="tag tag-red">🍬 Bonbons</span>
+          <span class="tag tag-red">🎂 Gâteaux industriels</span>
+          <span class="tag tag-red">🍫 Nutella</span>
+          <span class="tag tag-red">🍫 Chocolat en excès</span>
+          <span class="tag tag-red">🥐 Viennoiseries</span>
+          <span class="tag tag-red">🍤 Fritures</span>
+          <span class="tag tag-red">🥫 Sauces grasses</span>
+          <span class="tag tag-red">🍺 Alcool fréquent</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <p class="card-title" style="color:var(--red);">⚠️ Faux aliments "healthy"</p>
+        <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">Attention — souvent très sucrés !</p>
+        <div class="tags">
+          <span class="tag tag-red">🥣 Céréales ultra sucrées</span>
+          <span class="tag tag-red">🧃 Jus industriels</span>
+          <span class="tag tag-red">🍨 Yaourts très sucrés</span>
+          <span class="tag tag-red">🥤 Smoothies industriels</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════ REPAS ═══════ -->
+  <section id="repas" class="section">
+    <p class="section-title">🍽️ Exemples de repas</p>
+
+    <p class="section-title" style="font-size:1.1rem;color:var(--green);">☀️ Repas du midi</p>
+    <div class="grid grid-3" style="margin-bottom:36px;">
+
+      <div class="meal-card">
+        <h3>🥗 Repas Midi 1</h3>
+        <ul>
+          <li>🍗 Poulet grillé</li>
+          <li>🍚 Riz</li>
+          <li>🥒 Concombres / tomates</li>
+          <li>💧 Eau</li>
+        </ul>
+      </div>
+
+      <div class="meal-card">
+        <h3>🥩 Repas Midi 2</h3>
+        <ul>
+          <li>🥩 Steak haché 5%</li>
+          <li>🫘 Haricots verts</li>
+          <li>🥔 Petite portion pommes de terre</li>
+        </ul>
+      </div>
+
+      <div class="meal-card">
+        <h3>🥗 Repas Midi 3 — Salade composée</h3>
+        <ul>
+          <li>🥗 Salade verte</li>
+          <li>🍅 Tomates</li>
+          <li>🥒 Concombre</li>
+          <li>🥚 Œufs durs</li>
+          <li>🐟 Thon en boîte</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <p class="section-title" style="font-size:1.1rem;color:var(--blue);">🌙 Repas du soir <small style="font-size:.8rem;font-weight:400;">(plus léger)</small></p>
+    <div class="grid grid-3">
+
+      <div class="meal-card soir">
+        <h3>🍜 Repas Soir 1</h3>
+        <ul>
+          <li>🍲 Bouillon de volaille</li>
+          <li>🍗 Blanc de poulet</li>
+          <li>🥒 Concombres</li>
+        </ul>
+      </div>
+
+      <div class="meal-card soir">
+        <h3>🍳 Repas Soir 2</h3>
+        <ul>
+          <li>🍳 Omelette</li>
+          <li>🥗 Salade</li>
+          <li>🍅 Tomates</li>
+        </ul>
+      </div>
+
+      <div class="meal-card soir">
+        <h3>🐟 Repas Soir 3</h3>
+        <ul>
+          <li>🐟 Poisson</li>
+          <li>🥦 Légumes vapeur</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="warning-box" style="margin-top:30px;">
+      <p>⚠️ <strong>Attention au "je mange presque rien"</strong></p>
+      <p style="margin-top:8px;font-size:.92rem;">Manger trop peu provoque : fatigue, perte musculaire, craquages et reprise de poids.<br>
+      ➡️ Le but est de <strong>manger intelligemment</strong>, pas de se punir.</p>
+    </div>
+  </section>
+
+  <!-- ═══════ MATIN ═══════ -->
+  <section id="matin" class="section">
+    <p class="section-title">🌅 Faut-il manger le matin ?</p>
+
+    <div class="card" style="margin-bottom:24px;border-left:4px solid var(--orange);">
+      <p style="font-size:1.05rem;font-weight:700;margin-bottom:10px;">Oui… mais pas obligatoire !</p>
+      <ul style="padding-left:18px;font-size:.93rem;line-height:2;">
+        <li>Si tu as <strong>faim le matin</strong> → mange.</li>
+        <li>Si tu <strong>n'as pas faim</strong> → inutile de te forcer.</li>
+      </ul>
+      <p style="margin-top:12px;font-size:.9rem;color:var(--muted);">Le plus important : éviter le grignotage et garder un déficit calorique raisonnable.</p>
+    </div>
+
+    <div class="grid grid-2">
+
+      <div class="meal-card breakfast">
+        <h3>☕ Option légère</h3>
+        <ul>
+          <li>☕ Café ou thé (sans sucre)</li>
+          <li>🍎 1 fruit</li>
+          <li>🫙 1 yaourt / skyr</li>
+        </ul>
+      </div>
+
+      <div class="meal-card breakfast">
+        <h3>🥚 Option plus complète</h3>
+        <ul>
+          <li>🥚 2 œufs (brouillés ou à la coque)</li>
+          <li>🍞 Pain complet</li>
+          <li>🍊 1 fruit</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div style="margin-top:28px;background:var(--card);border-radius:var(--radius);padding:24px;box-shadow:var(--shadow);">
+      <p style="font-weight:700;font-size:1rem;margin-bottom:14px;">📋 Checklist matin — coche ce que tu as fait aujourd'hui</p>
+      <ul class="checklist" id="morning-checklist">
+        <li data-key="eau"><span class="chk"></span><span>Boire un grand verre d'eau au réveil</span></li>
+        <li data-key="cafe"><span class="chk"></span><span>Café/thé sans sucre</span></li>
+        <li data-key="fruit"><span class="chk"></span><span>Manger un fruit</span></li>
+        <li data-key="proteine"><span class="chk"></span><span>Prendre des protéines (œufs, skyr…)</span></li>
+        <li data-key="pain"><span class="chk"></span><span>Éviter les viennoiseries / pain blanc</span></li>
+        <li data-key="grigno"><span class="chk"></span><span>Pas de grignotage avant midi</span></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- ═══════ ASTUCES ═══════ -->
+  <section id="astuces" class="section">
+    <p class="section-title">💡 Astuces qui marchent vraiment</p>
+
+    <div class="grid" style="gap:16px;">
+
+      <div class="tip-card">
+        <div class="tip-num">1</div>
+        <div class="tip-body">
+          <h4>💧 Boire beaucoup d'eau</h4>
+          <p>Très efficace contre les fausses faims. Vise 1,5 à 2 litres par jour. Boire un grand verre avant de manger réduit aussi la quantité ingérée.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-num">2</div>
+        <div class="tip-body">
+          <h4>🐢 Manger lentement</h4>
+          <p>Le cerveau met 20 minutes à comprendre que tu es rassasié. Manger vite = manger plus sans le réaliser.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-num">3</div>
+        <div class="tip-body">
+          <h4>🚫 Éviter le grignotage</h4>
+          <p>C'est souvent ça qui bloque la perte de poids. Si une fringale arrive, bois un verre d'eau ou mange une poignée d'amandes.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-num">4</div>
+        <div class="tip-body">
+          <h4>💪 Garder des protéines même le soir</h4>
+          <p>Elles protègent la masse musculaire et maintiennent la satiété. Un repas soir sans protéines peut déclencher des fringales nocturnes.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-num">5</div>
+        <div class="tip-body">
+          <h4>😴 Dormir correctement</h4>
+          <p>Le manque de sommeil augmente l'hormone de la faim (ghréline). 7–8h de sommeil = moins d'envie de grignoter.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-num">6</div>
+        <div class="tip-body">
+          <h4>⚖️ Ne pas se peser 10 fois par jour</h4>
+          <p>Le poids varie naturellement de 1 à 2 kg selon l'eau, les repas, l'heure. Ce qui compte : la tendance sur plusieurs semaines, pas le chiffre du matin.</p>
+        </div>
+      </div>
+
+      <div class="tip-card">
+        <div class="tip-num">7</div>
+        <div class="tip-body">
+          <h4>🎯 Viser la régularité, pas la perfection</h4>
+          <p>Un écart n'est pas un échec. Le meilleur régime est celui que tu peux tenir toute l'année. Continue proprement sans reprendre les anciennes habitudes.</p>
+        </div>
+      </div>
+
+    </div>
+
+    <div style="margin-top:32px;background:linear-gradient(135deg,#e8f8ee,#d5f5e3);border-radius:var(--radius);padding:24px;border:1px solid #abebc6;">
+      <p style="font-size:1.1rem;font-weight:800;color:var(--green);margin-bottom:10px;">✅ Objectif idéal</p>
+      <ul style="padding-left:18px;line-height:2.1;font-size:.95rem;">
+        <li>Continuer doucement sans se précipiter</li>
+        <li>Garder des repas équilibrés tous les jours</li>
+        <li>Éviter les excès tout en se permettant des plaisirs raisonnables</li>
+        <li>Ne pas reprendre les anciennes mauvaises habitudes</li>
+      </ul>
+      <p style="margin-top:12px;font-size:.95rem;font-style:italic;color:#1e7a40;">➡️ Le meilleur régime est celui que tu peux tenir toute l'année.</p>
+    </div>
+  </section>
+
+  <!-- ═══════ TRACKER ═══════ -->
+  <section id="tracker" class="section">
+    <p class="section-title">📊 Mon Tracker de suivi</p>
+
+    <div class="warning-box">
+      <strong>ℹ️ Données locales</strong> — Tout est sauvegardé dans ton navigateur (localStorage). Rien n'est envoyé sur Internet.
+    </div>
+
+    <div class="tracker-wrap">
+      <p style="font-weight:700;margin-bottom:16px;">➕ Ajouter une entrée</p>
+      <div class="tracker-row">
+        <input type="date" id="t-date" />
+        <input type="number" id="t-weight" placeholder="Poids (kg)" step="0.1" min="30" max="300" />
+        <input type="number" id="t-water" placeholder="Eau bue (L)" step="0.1" min="0" max="10" />
+        <select id="t-feeling">
+          <option value="">Ressenti…</option>
+          <option value="😊 Bien">😊 Bien</option>
+          <option value="😐 Moyen">😐 Moyen</option>
+          <option value="😩 Difficile">😩 Difficile</option>
+          <option value="💪 Très bien">💪 Très bien</option>
+        </select>
+      </div>
+      <div class="tracker-row">
+        <input type="text" id="t-note" placeholder="Note (repas, observation…)" />
+        <button class="btn-add" onclick="addEntry()">✅ Ajouter</button>
+        <button class="btn-clear" onclick="clearAll()">🗑️ Tout effacer</button>
+      </div>
+
+      <div id="tracker-stats" style="display:none;margin:20px 0;padding:16px;background:var(--bg);border-radius:10px;">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;">
+          <div><p style="font-size:.8rem;color:var(--muted);">POIDS ACTUEL</p><p id="stat-cur" style="font-size:1.4rem;font-weight:800;">—</p></div>
+          <div><p style="font-size:.8rem;color:var(--muted);">POIDS DE DÉPART</p><p id="stat-start" style="font-size:1.4rem;font-weight:800;">—</p></div>
+          <div><p style="font-size:.8rem;color:var(--muted);">DIFFÉRENCE</p><p id="stat-diff" style="font-size:1.4rem;font-weight:800;">—</p></div>
+          <div><p style="font-size:.8rem;color:var(--muted);">ENTRÉES</p><p id="stat-count" style="font-size:1.4rem;font-weight:800;">0</p></div>
+        </div>
+      </div>
+
+      <div style="overflow-x:auto;">
+        <table id="log-table">
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Poids</th>
+              <th>Eau</th>
+              <th>Ressenti</th>
+              <th>Note</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="log-body">
+            <tr id="empty-row"><td colspan="6" style="text-align:center;color:var(--muted);padding:30px;">Aucune entrée pour l'instant. Commence à tracker ! 💪</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>🥗 Régime &amp; Rééquilibrage Alimentaire &mdash; Manger intelligemment, pas se punir. 💪</p>
+</footer>
+
+<script>
+  // ── Tab navigation ──
+  const tabs   = document.querySelectorAll('#main-nav button');
+  const panels = document.querySelectorAll('.section');
+
+  tabs.forEach(btn => {
+    btn.addEventListener('click', () => {
+      tabs.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.tab).classList.add('active');
+    });
+  });
+
+  // ── Morning checklist (persisted) ──
+  const checklistItems = document.querySelectorAll('#morning-checklist li');
+
+  function loadChecklist() {
+    const saved = JSON.parse(localStorage.getItem('morning-checklist') || '{}');
+    checklistItems.forEach(li => {
+      if (saved[li.dataset.key]) li.classList.add('done');
+      li.querySelector('.chk').textContent = li.classList.contains('done') ? '✓' : '';
+    });
+  }
+
+  function saveChecklist() {
+    const data = {};
+    checklistItems.forEach(li => { data[li.dataset.key] = li.classList.contains('done'); });
+    localStorage.setItem('morning-checklist', JSON.stringify(data));
+  }
+
+  checklistItems.forEach(li => {
+    li.addEventListener('click', () => {
+      li.classList.toggle('done');
+      li.querySelector('.chk').textContent = li.classList.contains('done') ? '✓' : '';
+      saveChecklist();
+    });
+  });
+
+  loadChecklist();
+
+  // ── Tracker ──
+  function getEntries() {
+    return JSON.parse(localStorage.getItem('tracker-entries') || '[]');
+  }
+
+  function saveEntries(entries) {
+    localStorage.setItem('tracker-entries', JSON.stringify(entries));
+  }
+
+  function renderEntries() {
+    const entries = getEntries();
+    const tbody   = document.getElementById('log-body');
+    const emptyRow = document.getElementById('empty-row');
+
+    // Clear existing data rows (keep empty-row)
+    Array.from(tbody.querySelectorAll('tr:not(#empty-row)')).forEach(r => r.remove());
+
+    if (entries.length === 0) {
+      emptyRow.style.display = '';
+      document.getElementById('tracker-stats').style.display = 'none';
+      return;
+    }
+
+    emptyRow.style.display = 'none';
+    document.getElementById('tracker-stats').style.display = '';
+
+    // Stats
+    const weights = entries.filter(e => e.weight).map(e => parseFloat(e.weight));
+    if (weights.length) {
+      const cur   = weights[weights.length - 1];
+      const start = weights[0];
+      const diff  = (cur - start).toFixed(1);
+      document.getElementById('stat-cur').textContent   = cur + ' kg';
+      document.getElementById('stat-start').textContent = start + ' kg';
+      const diffEl = document.getElementById('stat-diff');
+      diffEl.textContent  = (diff > 0 ? '+' : '') + diff + ' kg';
+      diffEl.style.color  = diff <= 0 ? 'var(--green)' : 'var(--red)';
+    }
+    document.getElementById('stat-count').textContent = entries.length;
+
+    // Rows (most recent first)
+    [...entries].reverse().forEach((e, idx) => {
+      const realIdx = entries.length - 1 - idx;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${formatDate(e.date)}</td>
+        <td>${e.weight ? e.weight + ' kg' : '—'}</td>
+        <td>${e.water  ? e.water  + ' L'  : '—'}</td>
+        <td>${e.feeling || '—'}</td>
+        <td style="max-width:180px;word-break:break-word;">${e.note || '—'}</td>
+        <td><button class="del-btn" title="Supprimer" onclick="deleteEntry(${realIdx})">🗑</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  function formatDate(dateStr) {
+    if (!dateStr) return '—';
+    const [y, m, d] = dateStr.split('-');
+    return `${d}/${m}/${y}`;
+  }
+
+  function addEntry() {
+    const date    = document.getElementById('t-date').value;
+    const weight  = document.getElementById('t-weight').value;
+    const water   = document.getElementById('t-water').value;
+    const feeling = document.getElementById('t-feeling').value;
+    const note    = document.getElementById('t-note').value.trim();
+
+    if (!date && !weight && !water && !feeling && !note) {
+      alert('Remplis au moins un champ avant d\'ajouter une entrée !');
+      return;
+    }
+
+    const entries = getEntries();
+    entries.push({ date, weight, water, feeling, note });
+    saveEntries(entries);
+    renderEntries();
+
+    // Reset form
+    document.getElementById('t-date').value    = '';
+    document.getElementById('t-weight').value  = '';
+    document.getElementById('t-water').value   = '';
+    document.getElementById('t-feeling').value = '';
+    document.getElementById('t-note').value    = '';
+  }
+
+  function deleteEntry(idx) {
+    if (!confirm('Supprimer cette entrée ?')) return;
+    const entries = getEntries();
+    entries.splice(idx, 1);
+    saveEntries(entries);
+    renderEntries();
+  }
+
+  function clearAll() {
+    if (!confirm('Effacer tout le journal de suivi ?')) return;
+    saveEntries([]);
+    renderEntries();
+  }
+
+  // Set today's date as default
+  document.getElementById('t-date').value = new Date().toISOString().split('T')[0];
+
+  renderEntries();
+</script>
+</body>
+</html>
